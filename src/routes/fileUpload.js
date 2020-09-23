@@ -9,93 +9,62 @@ import upload from '../config/multer'
 // Variables
 const router = express.Router();
 
-router.post('/eteFile', (req,res)=> {
-  var FormData = require('form-data');
-  var data = new FormData();
-  data.append('file', fs.createReadStream('BCCPP.ete'));
+router.post(
+  '/eteFile', 
+  (req,res)=> {
+    upload(req, res, async function (err) {
+      if (err) {
+        res.status(200).send({
+          errmsg: "Couldn't upload file.",
+          data: err
+        })
+        return
+      }
+      if (!req.file) {
+        res.status(200).send({
+          errmsg: "Something is wrong with file."
+        })
+        return
+      }
 
-  var config = {
-    method: 'post',
-    url: 'http://25.34.216.242:3000/upload',
-    headers: { 
-      ...data.getHeaders()
-    },
-    data : data
-  };
+      var FormData = require('form-data');
+      var data = new FormData();
+      data.append('file', fs.createReadStream(req.file.path));
 
-  axios(config)
-  .then(function (response) {
-    console.log(JSON.stringify(response.data));
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+      var config = {
+        method: 'post',
+        url: 'http://25.34.216.242:3000/upload',
+        headers: { 
+          ...data.getHeaders()
+        },
+        data
+      };
 
-
-})
-
-
-// router.post(
-//   '/eteFile',
-//   (req, res) => {
-//     upload(req, res, async function (err) {
-      
-//       // let newFile = await fs.createReadStream(req.file.path);
-//       console.log(file);
-//       const form_data = new FormData();
-//       form_data.append('file', newFile);
-
-//       axios.defaults.headers.post['Content-Type'] = 'multipart/form-data'
-// 			axios.post(`http://25.34.216.242:3000/upload`, form_data)
-//       .then(res2 => {
-//         console.log(res2.data);
-//         res.status(200).send({
-//           msg: "File uploaded."
-//         })
-//       })
-//       .catch(err2 => {
-//         console.log(err2)
-//         res.status(400).send({
-//           errmsg: err2
-//         })
-//       })
-
-//       // try {
-//       //   var res2 = await axios({
-//       //     method: "post",
-//       //     url: 'http://25.34.216.242:3000/upload',
-//       //     headers: {
-//       //         // "Authorization": "Bearer " + access_token,
-//       //         "Content-Type": "multipart/form-data"
-//       //     },
-//       //     data: form_data
-//       //   });
-//       //   console.log(res2.data)
-  
-//       //   if (res2.data){
-//       //     if (res2.data.upload === 'done'){
-//       //       res.status(200).send({
-//       //         msg: "File uploaded."
-//       //       })
-//       //     } else if (res2.data.errmsg){
-//       //       res.status(400).send({
-//       //         errmsg: res2.data.errmsg
-//       //       })
-//       //     }
-//       //   } else {
-//       //     res.status(400).send({
-//       //       errmsg: "Unable to upload file."
-//       //     })
-//       //   }
-//       // } catch(err2) {
-//       //   console.log(err2)
-//       //   res.status(400).send({
-//       //     errmsg: err2
-//       //   })
-//       // }
-
-//     })
-//   }
-// )
+      axios(config)
+      .then(function (response) {
+        fs.unlinkSync(req.file.path, (err)=>{
+          if(err){
+            console.log("couldnt delete " + req.file.filename + " image");
+          }              
+        });
+        res.status(200).send({
+          msg: "File uploaded successfully.",
+          data: JSON.stringify(response.data)
+        })
+      })
+      .catch(function (error) {
+        fs.unlinkSync(req.file.path, (err)=>{
+          if(err){
+            console.log("couldnt delete " + req.file.filename + " image");
+          }              
+        });
+        res.status(200).send({
+          errmsg: "Couldn't upload file.",
+          data: error
+        })
+      });
+    })
+  }
+)
 
 export { router as default }
