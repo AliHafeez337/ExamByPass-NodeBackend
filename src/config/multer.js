@@ -6,16 +6,20 @@ let storage = multer.diskStorage({
     cb(null, path.join(__dirname, '../', 'uploads'))
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    cb(null, Date.now() + '-' + file.originalname)
   }
 })
 
 const fileFilter = (req, file, cb) => {
-  if(file.mimetype === 'application/octet-stream'){
-    req.file = file
-    cb(null, true);
-  }
-  else{
+  if (file.originalname && file.mimetype === 'application/octet-stream') {
+    let list = file.originalname.split('.')
+    if (list[list.length - 1] === 'ete') {
+      req.file = file
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  } else {
     cb(null, false);
   }
 }
