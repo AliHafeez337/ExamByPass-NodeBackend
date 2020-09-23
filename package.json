@@ -1,0 +1,35 @@
+{
+  "name": "exambypass-nodebackend",
+  "version": "1.0.0",
+  "description": "Exam By Pass simulator project backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js --ext js --exec babel-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AliHafeez337/ExamByPass-NodeBackend.git"
+  },
+  "author": "AliHafeez337",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AliHafeez337/ExamByPass-NodeBackend/issues"
+  },
+  "homepage": "https://github.com/AliHafeez337/ExamByPass-NodeBackend#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "form-data": "^3.0.0",
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0"
+  }
+}
